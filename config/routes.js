@@ -31,8 +31,26 @@ async function register(req, res) {
   }
 }
 
-function login(req, res) {
-  // implement user login
+async function login(req, res) {
+  try {
+    const { username, password } = req.body;
+    const userExists = await findBy({ username });
+    if (userExists && bcrypt.compareSync(password, user.password)) {
+      const token = generateToken(userExists);
+      res
+        .set({ "Set-Cookie": `token=${token}` })
+        .status(200)
+        .json({ user: userExists, token });
+    } else {
+      res.status(404).json({
+        message: "User with the username already exists"
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      error: "Internal server error"
+    });
+  }
 }
 
 function getJokes(req, res) {
