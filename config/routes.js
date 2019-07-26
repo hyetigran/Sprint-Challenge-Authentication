@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 const axios = require("axios");
-const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const { authenticate } = require("../auth/authenticate");
+const { jwtSecret } = require("../.env");
+const jwt = require("jsonwebtoken");
+const { findBy, add } = require("../models/users-model");
 
 module.exports = server => {
   server.post("/api/register", register);
@@ -10,9 +12,10 @@ module.exports = server => {
   server.get("/api/jokes", authenticate, getJokes);
 };
 
-async function register(req, res) {
+const register = async (req, res) => {
   try {
     const user = req.body;
+    console.log(user);
     const { username } = req.body;
     user.password = bcrypt.hashSync(user.password, 12);
     const userExists = await findBy({ username });
@@ -29,13 +32,13 @@ async function register(req, res) {
       error: "Internal error, please try again later"
     });
   }
-}
+};
 
 async function login(req, res) {
   try {
     const { username, password } = req.body;
     const userExists = await findBy({ username });
-    if (userExists && bcrypt.compareSync(password, user.password)) {
+    if (userExists && bcrypt.compareSync(password, userExists.password)) {
       const token = generateToken(userExists);
       res
         .set({ "Set-Cookie": `token=${token}` })
@@ -52,6 +55,17 @@ async function login(req, res) {
     });
   }
 }
+
+const generateToken = user => {
+  const payload = {
+    sub: user.id,
+    username: user.username
+  };
+  const options = {
+    expiresIn: "1d"
+  };
+  return jwt.sign(payload, jwtSecret, options);
+};
 
 function getJokes(req, res) {
   const requestOptions = {
