@@ -2,7 +2,7 @@
 const axios = require("axios");
 const bcrypt = require("bcryptjs");
 const { authenticate } = require("../auth/authenticate");
-const { jwtSecret } = require("../.env");
+const { jwtSecret } = require("./secret");
 const jwt = require("jsonwebtoken");
 const { findBy, add } = require("../models/users-model");
 
@@ -46,7 +46,7 @@ async function login(req, res) {
         .json({ user: userExists, token });
     } else {
       res.status(404).json({
-        message: "User with the username already exists"
+        message: "Invalid credentials"
       });
     }
   } catch (error) {
