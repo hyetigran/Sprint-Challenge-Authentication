@@ -33,7 +33,7 @@ class Form extends React.Component {
             value={this.state.password}
             placeholder="enter password"
           />
-          <button>Enter</button>
+          <button>{this.props.btnType}</button>
         </form>
       </div>
     );

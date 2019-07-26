@@ -15,7 +15,6 @@ module.exports = server => {
 const register = async (req, res) => {
   try {
     const user = req.body;
-    console.log(user);
     const { username } = req.body;
     user.password = bcrypt.hashSync(user.password, 12);
     const userExists = await findBy({ username });

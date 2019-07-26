@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Joke from "./Joke";
+import { URL } from "../utility";
 
 class Jokes extends Component {
   state = {
@@ -12,7 +13,7 @@ class Jokes extends Component {
       this.props.history.push("/");
     } else {
       axios
-        .get(`localhost:3001/jokes`, {
+        .get(`${URL}/jokes`, {
           headers: {
             Authorization: token
           }
